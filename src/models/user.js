@@ -1,5 +1,5 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("../database");
+import { DataTypes } from "sequelize";
+import sequelize from "../config/database.js";
 
 const Usuario = sequelize.define("usuarios", {
   id: {
@@ -16,18 +16,21 @@ const Usuario = sequelize.define("usuarios", {
     type: DataTypes.STRING(40),
     allowNull: true
   },
+  direccion: {
+    type: DataTypes.STRING(40),
+    allowNull: true
+  },
+  ciudad: {
+    type: DataTypes.STRING(40),
+    allowNull: true
+  },
   correo: {
     type: DataTypes.STRING(40),
     allowNull: false,
     unique: true
   },
-  dni: {
-    type: DataTypes.STRING(15),
-    allowNull: false,
-    unique: true
-  },
   password: {
-    type: DataTypes.STRING(40),
+    type: DataTypes.STRING(255),
     allowNull: false
   },
   tipoUsuario: {

@@ -1,44 +1,26 @@
-require('dotenv').config();
-const express = require("express");
-const cors = require("cors");
-const sequelize = require("./database");
+import app from "./app.js";
+import sequelize from "./config/database.js";
 
-// Importar rutas
-const userRoutes = require("./routes/userRoutes");
-const productoRoutes = require("./routes/productoRoutes");
-const ordenRoutes = require("./routes/ordenRoutes");
+async function main() {
+try {
+const init = process.argv[2];
 
-const app = express();
-const PORT = process.env.PORT || 4000;
+if (init)
+  await sequelize.sync({ force: true });
+else
+  await sequelize.sync({ force: false });
 
-app.use(cors({ origin: process.env.FRONTEND_URL || '*' }));
-app.use(express.json());
+console.log("Base de datos sincronizada!");
 
-// Health check
-app.get('/health', (req, res) => res.json({ status: 'ok' }));
+const port = process.env.PORT || 3005;
 
-// Usar las rutas
-app.use("/usuarios", userRoutes);
-// Exponer también las rutas de usuario en la raíz (por ejemplo POST /login)
-app.use("/", userRoutes);
-app.use("/productos", productoRoutes);
-app.use("/ordenes", ordenRoutes);
-
-// Iniciar servidor y sincronizar DB
-app.listen(PORT, async () => {
-  try {
-    // Asegurarse de que los modelos se carguen para registrar tablas y asociaciones
-    require("./models/user");
-    require("./models/producto");
-    require("./models/orden");
-    require("./models/OrdenProducto");
-
-    await sequelize.authenticate();
-    await sequelize.sync({ force: false });
-    console.log(`Server running on http://localhost:${PORT}`);
-    // Mostrar modelos registrados para depuración
-    console.log("Sequelize models:", Object.keys(sequelize.models));
-  } catch (error) {
-    console.error(" Error al conectar DB:", error);
-  }
+app.listen(port, () => {
+  console.log("Server running on port " + port);
 });
+
+} catch (error) {
+console.log(error);
+}
+}
+
+main();

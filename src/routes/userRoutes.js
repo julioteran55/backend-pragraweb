@@ -1,10 +1,18 @@
-const express = require("express");
-const router = express.Router();
-const userController = require("../controllers/userController");
+import express from "express";
+import userController from "../controllers/userController.js";
+import { isAdmin , isAuthenticated } from "../middleware/auth.js";
+const userRouter = express.Router();
 
-// Endpoints de usuarios
-router.post("/register", userController.register);
-router.post("/login", userController.login);
-router.get("/:id", userController.getUser);
+//con permisos de administrador
 
-module.exports = router;
+userRouter.get("/",isAdmin, userController.getUsers); //todos
+userRouter.get("/:id",isAdmin, userController.getUser); //uno
+userRouter.put("/:id", isAdmin ,userController.updateUser);
+userRouter.delete("/:id", isAdmin, userController.deleteUser);
+
+//propios del usuario
+//solo debe estar autenticado
+userRouter.put("/me",isAuthenticated, userController.getMer);
+userRouter.get("/me", isAuthenticated ,userController.updateMe);
+
+export default userRouter;

@@ -1,7 +1,8 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("../database");
-const Orden = require("./orden");
-const Producto = require("./producto");
+import { DataTypes } from "sequelize";
+import sequelize from "../config/database.js";
+import Orden from "./orden.js";
+import Producto from "./producto.js";
+
 
 const OrdenProducto = sequelize.define("ordenes_productos", {
   cantidad: {

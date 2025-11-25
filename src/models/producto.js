@@ -1,5 +1,5 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("../database");
+import { DataTypes } from "sequelize";
+import sequelize from "../config/database.js";
 
 const Producto = sequelize.define("productos", {
   id: {
@@ -28,6 +28,10 @@ const Producto = sequelize.define("productos", {
     type: DataTypes.INTEGER,
     allowNull: false,
     defaultValue: 0
+  },
+  precio: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
   },
   imagen: {
     type: DataTypes.STRING,
