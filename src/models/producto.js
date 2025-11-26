@@ -30,7 +30,7 @@ const Producto = sequelize.define("productos", {
     defaultValue: 0
   },
   precio: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.FLOAT,
     allowNull: false,
   },
   imagen: {

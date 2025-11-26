@@ -2,20 +2,21 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import usuarioRepository from "../repositories/user.repository.js";
+import Usuario from "../models/user.js";
 
 dotenv.config();
 
 export const register = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { nombre, correo, password } = req.body;
 
     // Validar campos simples
-    if (!name || !email || !password) {
+    if (!nombre || !correo || !password) {
       return res.status(400).json({ message: "Todos los campos son obligatorios" });
     }
 
     // Verificar si ya existe
-    const existingUser = await usuarioRepository.findOne({ where: { email } });
+    const existingUser = await Usuario.findOne({ where: { correo } });
 
     if (existingUser) {
       return res.status(400).json({ message: "El correo ya está registrado" });
@@ -23,18 +24,19 @@ export const register = async (req, res) => {
 
     // Hashear
     const saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS) || 10;
+
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
+    const oldUser = req.body
     // Crear usuario
     const newUser = await usuarioRepository.create({
-      name,
-      email,
+      ...oldUser,
       password: hashedPassword,
     });
 
     return res.status(201).json({
       message: "Usuario creado correctamente",
-      user: { id: newUser.id, name: newUser.name, email: newUser.email },
+      user: { id: newUser.id, nombre: newUser.nombre, correo: newUser.correo },
     });
 
   } catch (error) {
@@ -46,15 +48,15 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { correo, password } = req.body;
 
     // Validación simple
-    if (!email || !password) {
+    if (!correo || !password) {
       return res.status(400).json({ message: "Correo y contraseña obligatorios" });
     }
 
     // Buscar usuario
-    const user = await usuarioRepository.findOne({ where: { email } });
+    const user = await Usuario.findOne({ where: { correo } });
 
     if (!user) {
       return res.status(400).json({ message: "Credenciales inválidas" });
@@ -69,7 +71,7 @@ export const login = async (req, res) => {
 
     // Generar token
     const token = jwt.sign(
-      { userId: user.id, email: user.email , tipoUsuario : user.tipoUsuario},
+      { userId: user.id, correo: user.correo , tipoUsuario : user.tipoUsuario},
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
@@ -77,7 +79,7 @@ export const login = async (req, res) => {
     return res.status(200).json({
       message: "Login exitoso",
       token,
-      user: { id: user.id, nombre: user.nombre, email: user.email },
+      user: { id: user.id, nombre: user.nombre, correo: user.correo },
     });
 
   } catch (error) {
