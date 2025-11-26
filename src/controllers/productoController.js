@@ -1,6 +1,6 @@
-const Producto = require("../models/producto");
+import Producto from "../models/producto.js";
 
-exports.createProducto = async (req, res) => {
+export const createProducto = async (req, res) => {
   try {
     const nuevoProducto = await Producto.create(req.body);
     res.status(201).json(nuevoProducto);
@@ -9,7 +9,7 @@ exports.createProducto = async (req, res) => {
   }
 };
 
-exports.getProductos = async (req, res) => {
+export const getProductos = async (req, res) => {
   try {
     const productos = await Producto.findAll();
     res.json(productos);
@@ -17,3 +17,6 @@ exports.getProductos = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+const productoController = {getProductos,createProducto}
+export default productoController 

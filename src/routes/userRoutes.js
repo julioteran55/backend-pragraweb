@@ -12,7 +12,7 @@ userRouter.delete("/:id", isAdmin, userController.deleteUser);
 
 //propios del usuario
 //solo debe estar autenticado
-userRouter.put("/me",isAuthenticated, userController.getMer);
-userRouter.get("/me", isAuthenticated ,userController.updateMe);
+userRouter.get("/me",isAuthenticated, userController.getMe);
+userRouter.put("/me", isAuthenticated ,userController.updateMe);
 
 export default userRouter;

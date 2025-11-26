@@ -42,4 +42,4 @@ const Producto = sequelize.define("productos", {
   freezeTableName: true
 });
 
-module.exports = Producto;
+export default Producto

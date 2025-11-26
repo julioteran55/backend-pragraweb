@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import usuarioRepository from "../repositories/usuarioRepository.js";
+import usuarioRepository from "../repositories/user.repository.js";
 
 dotenv.config();
 

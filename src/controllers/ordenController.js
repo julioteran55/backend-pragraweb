@@ -1,9 +1,9 @@
-const Orden = require("../models/orden");
-const Usuario = require("../models/user");
-const Producto = require("../models/producto");
-const OrdenProducto = require("../models/OrdenProducto");
+import Orden from "../models/orden.js";
+import Usuario from "../models/user.js";
+import Producto from "../models/producto.js";
+import OrdenProducto from "../models/OrdenProducto.js";
 
-exports.createOrden = async (req, res) => {
+export const createOrden = async (req, res) => {
   try {
     const { usuarioId, productos } = req.body; 
     // productos = [{ productoId, cantidad, precioUnitario }]
@@ -29,7 +29,7 @@ exports.createOrden = async (req, res) => {
   }
 };
 
-exports.getOrdenes = async (req, res) => {
+export const getOrdenes = async (req, res) => {
   try {
     const ordenes = await Orden.findAll({
       include: [
@@ -42,3 +42,5 @@ exports.getOrdenes = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+const ordenController = {getOrdenes,createOrden}
+export default ordenController
