@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/database.js";
+import Categoria from "./categoria.js";
 
 const Producto = sequelize.define("productos", {
   id: {
@@ -20,9 +21,13 @@ const Producto = sequelize.define("productos", {
     type: DataTypes.TEXT,
     allowNull: true
   },
-  categoria: {
-    type: DataTypes.STRING(30),
-    allowNull: false
+   categoriaId: {
+    type: DataTypes.UUID,
+    allowNull: true,
+    references: {
+      model: "categorias",   // nombre literal de la tabla
+      key: "id"
+    }
   },
   stock: {
     type: DataTypes.INTEGER,
@@ -41,5 +46,9 @@ const Producto = sequelize.define("productos", {
   timestamps: false,
   freezeTableName: true
 });
+
+// Asociaciones
+Producto.belongsTo(Categoria, { foreignKey: "categoriaId" });
+Categoria.hasMany(Producto, { foreignKey: "categoriaId" });
 
 export default Producto

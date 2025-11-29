@@ -7,6 +7,7 @@ import productoRoutes from "./routes/productoRoutes.js";
 import ordenRoutes from "./routes/ordenRoutes.js";
 import authRouter from "./routes/authRoutes.js";
 import userRouter from "./routes/userRoutes.js";
+import routerCategoria from "./routes/categoriaRoutes.js";
 const app = express();
 
 app.use(
@@ -24,6 +25,6 @@ app.use("/usuarios", userRouter);
 app.use("/auth", authRouter);
 app.use("/productos", productoRoutes);
 app.use("/ordenes", ordenRoutes);
-
+app.use("/categorias",routerCategoria)
 export default app;
 
