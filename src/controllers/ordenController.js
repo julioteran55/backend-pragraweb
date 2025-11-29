@@ -1,46 +1,83 @@
-import Orden from "../models/orden.js";
-import Usuario from "../models/user.js";
-import Producto from "../models/producto.js";
-import OrdenProducto from "../models/OrdenProducto.js";
+import carritoRepository from "../repositories/carritoRepository.js";
+import ordenRepository from "../repositories/ordenRepository.js";
 
-export const createOrden = async (req, res) => {
-  try {
-    const { usuarioId, productos } = req.body; 
-    // productos = [{ productoId, cantidad, precioUnitario }]
-    const orden = await Orden.create({ usuarioId, total: 0 });
+class OrdenController {
 
-    let total = 0;
-    for (const p of productos) {
-      await OrdenProducto.create({
-        ordenId: orden.id,
-        productoId: p.productoId,
-        cantidad: p.cantidad,
-        precioUnitario: p.precioUnitario
+  // Crear orden desde el carrito
+  async crearOrden(req, res) {
+    try {
+      const usuarioId = req.user.id;
+
+      // Obtener carrito con items
+      const carrito = await carritoRepository.obtenerCarritoPorUsuario(usuarioId);
+
+      if (!carrito || carrito.items_carritos.length === 0) {
+        return res.status(400).json({ error: "El carrito está vacío" });
+      }
+
+      // Calcular total
+      let total = 0;
+      carrito.items_carritos.forEach(item => {
+        total += item.cantidad * item.producto.precio;
       });
-      total += p.cantidad * p.precioUnitario;
+
+      // Crear orden
+      const orden = await ordenRepository.crearOrden(usuarioId, total);
+
+      // Agregar productos a orden_producto
+      for (const item of carrito.items_carritos) {
+        await ordenRepository.agregarProductoAOrden(
+          orden.id,
+          item.producto.id,
+          item.cantidad,
+          item.producto.precio
+        );
+      }
+
+      // Vaciar carrito
+      await carritoRepository.vaciarCarrito(carrito.id);
+
+      return res.json({ message: "Orden creada", orden });
+
+    } catch (error) {
+      console.error("Error al crear orden:", error);
+      return res.status(500).json({ error: "Error interno" });
     }
-
-    orden.total = total;
-    await orden.save();
-
-    res.status(201).json(orden);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
   }
-};
 
-export const getOrdenes = async (req, res) => {
-  try {
-    const ordenes = await Orden.findAll({
-      include: [
-        { model: Usuario, as: "usuario" },
-        { model: Producto, as: "productos" }
-      ]
-    });
-    res.json(ordenes);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+  // Obtener todas las órdenes del usuario autenticado
+  async obtenerOrdenes(req, res) {
+    try {
+      const usuarioId = req.user.id;
+
+      const ordenes = await ordenRepository.obtenerOrdenesPorUsuario(usuarioId);
+
+      return res.json(ordenes);
+
+    } catch (error) {
+      console.error("Error al obtener órdenes:", error);
+      return res.status(500).json({ error: "Error interno" });
+    }
   }
-};
-const ordenController = {getOrdenes,createOrden}
-export default ordenController
+
+  // Obtener una orden específica
+  async obtenerOrdenPorId(req, res) {
+    try {
+      const { ordenId } = req.params;
+
+      const orden = await ordenRepository.obtenerOrdenPorId(ordenId);
+
+      if (!orden) {
+        return res.status(404).json({ error: "Orden no encontrada" });
+      }
+
+      return res.json(orden);
+
+    } catch (error) {
+      console.error("Error al obtener orden:", error);
+      return res.status(500).json({ error: "Error interno" });
+    }
+  }
+}
+
+export default new OrdenController();
