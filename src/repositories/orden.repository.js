@@ -1,5 +1,5 @@
 import Orden from "../models/orden.js";
-import OrdenProducto from "../models/OrdenProducto.js";
+import OrdenProducto from "../models/ordenProducto.js";
 class OrdenRepository {
 
   async crearOrden(usuarioId, total,direccionEnvio) {
