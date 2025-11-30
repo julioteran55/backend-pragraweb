@@ -36,4 +36,13 @@ const eliminarCategoria = async (req,res) =>{
   }
 }
 
-export const categoriaController = {eliminarCategoria,crearCategoria,editarCategoria,listarCategoria}
+const buscarCategoria = async(req,res) =>{
+  try{
+    const nuevaCategoría = await categoriaRepository.findById(req.params.categoriaId);
+    res.status(201).json({data : nuevaCategoría});
+  }catch(error){
+    res.status(500).json({ error: error.message });
+  }
+
+}
+export const categoriaController = {eliminarCategoria,crearCategoria,editarCategoria,listarCategoria,buscarCategoria}

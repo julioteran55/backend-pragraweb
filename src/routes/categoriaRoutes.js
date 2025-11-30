@@ -8,5 +8,5 @@ routerCategoria.post("/",isAdmin,categoriaController.crearCategoria);
 routerCategoria.put("/:id",isAdmin,categoriaController.editarCategoria);
 routerCategoria.delete("/:id",isAdmin,categoriaController.eliminarCategoria)
 routerCategoria.get("/",categoriaController.listarCategoria)
-
+routerCategoria.get("/:categoriaId",categoriaController.buscarCategoria)
 export default routerCategoria;
