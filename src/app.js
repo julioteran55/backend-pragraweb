@@ -8,6 +8,8 @@ import ordenRoutes from "./routes/ordenRoutes.js";
 import authRouter from "./routes/authRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 import routerCategoria from "./routes/categoriaRoutes.js";
+import carritoRouter from "./routes/carritoRoutes.js";
+
 const app = express();
 
 app.use(
@@ -26,5 +28,6 @@ app.use("/auth", authRouter);
 app.use("/productos", productoRoutes);
 app.use("/ordenes", ordenRoutes);
 app.use("/categorias",routerCategoria)
+app.use("/carrito",carritoRouter)
 export default app;
 

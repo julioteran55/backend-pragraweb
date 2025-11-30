@@ -20,11 +20,20 @@ const Orden = sequelize.define("ordenes", {
     allowNull: false,
     defaultValue: 0.00
   },
-  estado: {
-    type: DataTypes.ENUM("pendiente", "pagado", "enviado", "cancelado"),
+  metodoPago: {
+    type: DataTypes.STRING,
     allowNull: false,
-    defaultValue: "pendiente"
-  }
+    defaultValue: "",
+  },
+   estadoPago: {
+    type: DataTypes.ENUM("pendiente", "pagado"),
+    allowNull: false,
+    defaultValue: "pendiente",
+  },
+  direccionEnvio: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
 }, {
   timestamps: false,
   freezeTableName: true

@@ -1,4 +1,4 @@
-import carritoRepository from "../repositories/carritoRepository.js";
+import carritoRepository from "../repositories/carritoCompra.repository.js";
 import Producto from "../models/producto.js";
 
 class CarritoController {
@@ -6,7 +6,7 @@ class CarritoController {
   // Obtener carrito del usuario autenticado
   async obtenerCarrito(req, res) {
     try {
-      const usuarioId = req.user.id;
+      const usuarioId = req.user.userId;
 
       let carrito = await carritoRepository.obtenerCarritoPorUsuario(usuarioId);
 
@@ -26,15 +26,15 @@ class CarritoController {
   // Agregar item al carrito
   async agregarItem(req, res) {
     try {
-      const usuarioId = req.user.id;
-      const { productoId, cantidad } = req.body;
+      const usuarioId = req.user.userId;
+      const { itemId, cantidad } = req.body;
 
-      if (!productoId) {
-        return res.status(400).json({ error: "productoId es requerido" });
+      if (!itemId) {
+        return res.status(400).json({ error: "itemId es requerido" });
       }
 
       // Verificar que el producto exista
-      const producto = await Producto.findByPk(productoId);
+      const producto = await Producto.findByPk(itemId);
       if (!producto) {
         return res.status(404).json({ error: "Producto no encontrado" });
       }
@@ -49,7 +49,7 @@ class CarritoController {
       // Agregar item
       const item = await carritoRepository.agregarItem(
         carrito.id,
-        productoId,
+        itemId,
         cantidad || 1
       );
 
@@ -99,7 +99,7 @@ class CarritoController {
   // Vaciar carrito
   async vaciarCarrito(req, res) {
     try {
-      const usuarioId = req.user.id;
+      const usuarioId = req.user.userId;
 
       const carrito = await carritoRepository.obtenerCarritoPorUsuario(usuarioId);
 

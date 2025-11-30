@@ -1,9 +1,13 @@
 import express from "express";
-import ordenController from "../controllers/ordenController.js";
+import OrdenController from "../controllers/ordenController.js";
+import { isAuthenticated,isAdmin } from "../middleware/auth.js";
 
-const router = express.Router();
+const ordenRouter = express.Router();
 
-router.post("/", ordenController.createOrden);
-router.get("/", ordenController.getOrdenes);
+ordenRouter.post("/crear",isAuthenticated, OrdenController.crearOrden);
+ordenRouter.get("/ordenes-por-usuario", isAuthenticated,OrdenController.obtenerOrdenes);
+ordenRouter.get("/:ordenId", isAdmin,OrdenController.obtenerOrdenPorId);
+ordenRouter.put("/:ordenId/direccion", isAuthenticated, OrdenController.actualizarDireccion);
+ordenRouter.put("/:ordenId/pagar", isAuthenticated, OrdenController.confirmarPago);
 
-export default router;
+export default ordenRouter;

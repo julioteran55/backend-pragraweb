@@ -1,5 +1,5 @@
-import Carrito from "../models/CarritoDeCompra.js";
-import ItemCarrito from "../models/ItemDeCarrito.js";
+import Carrito from "../models/carritoCompra.js";
+import ItemCarrito from "../models/itemCarrito.js";
 import Producto from "../models/producto.js";
 
 class CarritoRepository {

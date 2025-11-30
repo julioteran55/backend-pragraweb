@@ -1,12 +1,18 @@
-import carritoRepository from "../repositories/carritoRepository.js";
-import ordenRepository from "../repositories/ordenRepository.js";
+import carritoRepository from "../repositories/carritoCompra.repository.js";
+import ordenRepository from "../repositories/orden.repository.js";
+import Orden from "../models/orden.js";
 
 class OrdenController {
 
   // Crear orden desde el carrito
   async crearOrden(req, res) {
     try {
-      const usuarioId = req.user.id;
+      const usuarioId = req.user.userId;
+      const { direccionEnvio } = req.body;
+
+      if (!direccionEnvio) {
+        return res.status(400).json({ error: "La dirección de envío es obligatoria" });
+      }
 
       // Obtener carrito con items
       const carrito = await carritoRepository.obtenerCarritoPorUsuario(usuarioId);
@@ -21,8 +27,8 @@ class OrdenController {
         total += item.cantidad * item.producto.precio;
       });
 
-      // Crear orden
-      const orden = await ordenRepository.crearOrden(usuarioId, total);
+      // Crear orden con dirección de envío incluida
+      const orden = await ordenRepository.crearOrden(usuarioId, total, direccionEnvio);
 
       // Agregar productos a orden_producto
       for (const item of carrito.items_carritos) {
@@ -48,7 +54,7 @@ class OrdenController {
   // Obtener todas las órdenes del usuario autenticado
   async obtenerOrdenes(req, res) {
     try {
-      const usuarioId = req.user.id;
+      const usuarioId = req.user.userId;
 
       const ordenes = await ordenRepository.obtenerOrdenesPorUsuario(usuarioId);
 
@@ -78,6 +84,67 @@ class OrdenController {
       return res.status(500).json({ error: "Error interno" });
     }
   }
+
+  // Actualizar dirección de envío
+  async actualizarDireccion(req, res) {
+    try {
+      const { ordenId } = req.params;
+      const { direccionEnvio } = req.body;
+
+      if (!direccionEnvio) {
+        return res.status(400).json({ error: "La dirección de envío es obligatoria" });
+      }
+
+      const orden = await Orden.findByPk(ordenId);
+
+      if (!orden) {
+        return res.status(404).json({ error: "Orden no encontrada" });
+      }
+
+      orden.direccionEnvio = direccionEnvio;
+      await orden.save();
+
+      return res.json({
+        message: "Dirección actualizada correctamente",
+        orden,
+      });
+
+    } catch (error) {
+      console.error("Error al actualizar dirección:", error);
+      return res.status(500).json({ error: "Error interno" });
+    }
+  }
+
+  // Confirmar pago → cambia estadoPago a "pagado"
+  async confirmarPago(req, res) {
+    try {
+      const { ordenId } = req.params;
+
+      const orden = await Orden.findByPk(ordenId);
+
+      if (!orden) {
+        return res.status(404).json({ error: "Orden no encontrada" });
+      }
+
+      if (orden.estadoPago === "pagado") {
+        return res.status(400).json({ error: "La orden ya está pagada" });
+      }
+
+      orden.estadoPago = "pagado";
+      await orden.save();
+
+      return res.json({
+        message: "Pago confirmado. Orden marcada como pagada.",
+        orden,
+      });
+
+    } catch (error) {
+      console.error("Error al confirmar pago:", error);
+      return res.status(500).json({ error: "Error interno" });
+    }
+  }
+
 }
 
 export default new OrdenController();
+

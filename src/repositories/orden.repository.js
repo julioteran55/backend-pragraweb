@@ -2,8 +2,8 @@ import Orden from "../models/orden.js";
 import OrdenProducto from "../models/OrdenProducto.js";
 class OrdenRepository {
 
-  async crearOrden(usuarioId, total) {
-    return await Orden.create({ usuarioId, total });
+  async crearOrden(usuarioId, total,direccionEnvio) {
+    return await Orden.create({ usuarioId, total , direccionEnvio });
   }
 
   async agregarProductoAOrden(ordenId, productoId, cantidad, precioUnitario) {
