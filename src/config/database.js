@@ -10,6 +10,13 @@ const CADENA_CONEXION =
 
 const sequelize = new Sequelize(CADENA_CONEXION, {
   logging: false, // desactiva logs de SQL en consola
+   dialect: "postgres",
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false, // Azure NO permite certificados locales
+    },
+  },
 });
 
 export default sequelize;
