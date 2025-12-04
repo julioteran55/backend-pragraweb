@@ -10,6 +10,6 @@ ordenRouter.get("/ordenes-por-usuario", isAuthenticated,OrdenController.obtenerO
 ordenRouter.get("/:ordenId", isAdmin,OrdenController.obtenerOrdenPorId);
 ordenRouter.put("/:ordenId/direccion", isAuthenticated, OrdenController.actualizarDireccion);
 ordenRouter.put("/:ordenId/pagar", isAuthenticated, OrdenController.confirmarPago);
-ordenRouter.get("/ordenes",isAdmin,OrdenController.listarOrdenes)
-ordenRouter.get("/ordenes-por-usuario-id",isAdmin,OrdenController.obtenerOrdenesPorUsuario)
+ordenRouter.get("",isAdmin,OrdenController.listarOrdenes)
+ordenRouter.get("/ordenes-por-usuario-id/:id",isAdmin,OrdenController.obtenerOrdenesPorUsuario)
 export default ordenRouter;

@@ -87,3 +87,44 @@ export const login = async (req, res) => {
     return res.status(500).json({ message: "Error interno del servidor" });
   }
 };
+
+export const changePassword = async (req, res) => {
+  try {
+    const usuarioId = req.user.userId
+    const { actualPassword, nuevaPassword } = req.body;
+
+    // Validar campos
+    if (!actualPassword || !nuevaPassword) {
+      return res.status(400).json({ message: "Debe enviar la contraseña actual y la nueva" });
+    }
+
+    // Buscar usuario por ID
+    const user = await Usuario.findByPk(usuarioId);
+
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    // Verificar contraseña actual
+    const isMatch = await bcrypt.compare(actualPassword, user.password);
+
+    if (!isMatch) {
+      return res.status(400).json({ message: "La contraseña actual es incorrecta" });
+    }
+
+    // Hashear nueva contraseña
+    const saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS) || 10;
+    const hashedPassword = await bcrypt.hash(nuevaPassword, saltRounds);
+
+    // Actualizar contraseña
+    user.password = hashedPassword;
+    await user.save();
+
+    return res.status(200).json({ message: "Contraseña actualizada correctamente" });
+
+  } catch (error) {
+    console.error("Error changePassword:", error);
+    return res.status(500).json({ message: "Error interno del servidor" });
+  }
+};
+
