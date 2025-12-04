@@ -50,11 +50,25 @@ class OrdenController {
       return res.status(500).json({ error: "Error interno" });
     }
   }
-
+  
   // Obtener todas las órdenes del usuario autenticado
   async obtenerOrdenes(req, res) {
     try {
       const usuarioId = req.user.userId;
+
+      const ordenes = await ordenRepository.obtenerOrdenesPorUsuario(usuarioId);
+
+      return res.json(ordenes);
+
+    } catch (error) {
+      console.error("Error al obtener órdenes:", error);
+      return res.status(500).json({ error: "Error interno" });
+    }
+  }
+
+  async obtenerOrdenesPorUsuario(req, res) {
+    try {
+      const usuarioId = req.params.id;
 
       const ordenes = await ordenRepository.obtenerOrdenesPorUsuario(usuarioId);
 
@@ -143,6 +157,19 @@ class OrdenController {
       return res.status(500).json({ error: "Error interno" });
     }
   }
+
+  async listarOrdenes(req, res) {
+    try {
+      // 1. Obtener todas las órdenes de la base de datos
+      const ordenes = await Orden.findAll(); // Usar 'await' es crucial
+
+      // 2. Devolver la lista de órdenes
+      return res.json(ordenes);
+
+    } catch (error) {
+      console.error("Error al listar órdenes:", error); // Mensaje de error más específico
+      return res.status(500).json({ error: "Error interno" });
+    }}
 
 }
 
